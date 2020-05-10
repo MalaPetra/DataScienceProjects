@@ -145,3 +145,25 @@ tidy_data %>%
 ```
 
 The wordcloud enables us to efficiently visualize the negative as well as postive groups of data.
+
+
+# Sentiment of individual books
+
+```{r}
+janeaustensentiment <- tidy_data %>%
+  inner_join(get_sentiments("bing")) %>%
+  count(book , index = linenumber %/% 80, sentiment) %>%
+  spread(sentiment, n, fill = 0) %>% # this will show index and number of positive and negative words
+  mutate(sentiment = positive - negative)
+```
+
+```{r}
+ggplot(janeaustensentiment, aes(index, sentiment, fill=book)) +
+  geom_col(show.legend = FALSE) +
+  facet_wrap(~book, ncol = 2, scales = "free_x")
+
+```
+
+We can now see how the plot of each novel changes toward more positive or negative sentiment over the trajectory of the story.
+
+More on Text Mining with R: https://books.google.co.jp/books?id=qNcnDwAAQBAJ&pg=PA18&lpg=PA18&dq=linenumber+%25/%25+80&source=bl&ots=Q0CY6mGZtX&sig=ACfU3U1wUbx31ixGfacMFKAUrAiCEp3-jQ&hl=en&sa=X&ved=2ahUKEwjj1qKy6anpAhWWMN4KHRJEBUwQ6AEwAHoECAUQAQ#v=onepage&q=linenumber%20%25%2F%25%2080&f=false
